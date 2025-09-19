@@ -1,7 +1,61 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:event_management_system/Authentication/login.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class EventifyHome extends StatefulWidget {
+  const EventifyHome({Key? key}) : super(key: key);
+
+  @override
+  State<EventifyHome> createState() => _EventifyHomeState();
+}
+
+class _EventifyHomeState extends State<EventifyHome> {
+  final List<Map<String, String>> _bannerImages = [
+    {
+      'image': 'assets/images/banner1.jpg',
+      'title': 'BOOK YOUR EVENTS',
+      'subtitle': 'Your personal event planner in your pocket',
+      'button': 'Plan in Ten Minutes',
+    },
+    {
+      'image': 'assets/images/banner2.jpg',
+      'title': 'FIND THE BEST VENUES',
+      'subtitle': 'Discover top-rated spaces near you',
+      'button': 'Browse Venues',
+    },
+    {
+      'image': 'assets/images/banner3.jpg',
+      'title': 'MAKE MEMORIES',
+      'subtitle': 'Capture every moment of your big day',
+      'button': 'Start Planning',
+    },
+  ];
+
+  int _current = 0;
+  int _selectedIndex = 0;
+  bool isLoggedIn = false; // <-- Add this variable
+
+  void _onNavTap(int index) async {
+    // If user is not logged in and taps Bookings, Favourites, or Profile
+    if (!isLoggedIn && (index == 2 || index == 3 || index == 4)) {
+      // Navigate to login page and wait for result
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+      if (result == true) {
+        setState(() {
+          isLoggedIn = true;
+          _selectedIndex = index;
+        });
+      }
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +70,7 @@ class HomePage extends StatelessWidget {
         ),
         title: RichText(
           text: const TextSpan(
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Sans',
-            ),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             children: [
               TextSpan(
                 text: 'E',
@@ -28,9 +78,7 @@ class HomePage extends StatelessWidget {
               ),
               TextSpan(
                 text: 'v',
-                style: TextStyle(
-                  color: Color(0xFF1CCFCF),
-                ), // Different color for 'v'
+                style: TextStyle(color: Color(0xFF1CCFCF)),
               ),
               TextSpan(
                 text: 'entify',
@@ -41,198 +89,373 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.menu, color: Color(0xFF23223A)),
-            onPressed: () {
-              // TODO: Open drawer or menu
-            },
+            icon: const Icon(Icons.menu, color: Colors.black87),
+            onPressed: () {},
           ),
           const SizedBox(width: 8),
         ],
       ),
+
+      // ---------------- BODY ----------------
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Welcome Banner
-              ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: Stack(
-                  children: [
-                    Image.asset(
-                      'assets/images/wed.jpeg', // Replace with your banner image
-                      height: 170,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                    Container(
-                      height: 170,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        color: Colors.black.withOpacity(0.4),
-                      ),
-                    ),
-                    Positioned.fill(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ---------- Carousel ----------
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                children: [
+                  CarouselSlider.builder(
+                    itemCount: _bannerImages.length,
+                    itemBuilder: (context, index, _) {
+                      final banner = _bannerImages[index];
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Stack(
+                          alignment: Alignment.center,
                           children: [
-                            const Text(
-                              'WELCOME TO EVENTIFY',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22,
-                                letterSpacing: 1.2,
-                              ),
+                            Image.asset(
+                              banner['image']!,
+                              height: 300,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
                             ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Bookings Open for September!!',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
+                            Container(
+                              color: Colors.black45,
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    banner['title']!,
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    banner['subtitle']!,
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    icon: const Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 14,
+                                    ),
+                                    label: Text(banner['button']!),
+                                    onPressed: () {},
+                                  ),
+                                ],
                               ),
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 18,
-                                  vertical: 8,
-                                ),
-                              ),
-                              onPressed: () {
-                                // TODO: Book now action
-                              },
-                              icon: const Icon(Icons.open_in_new, size: 18),
-                              label: const Text('Book now!'),
                             ),
                           ],
                         ),
-                      ),
+                      );
+                    },
+                    options: CarouselOptions(
+                      height: 300,
+                      viewportFraction: 1.0,
+                      autoPlay: true,
+                      autoPlayInterval: const Duration(seconds: 3),
+                      onPageChanged: (i, _) => setState(() => _current = i),
                     ),
-                  ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: _bannerImages.asMap().entries.map((entry) {
+                      return Container(
+                        width: 8,
+                        height: 8,
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _current == entry.key
+                              ? Colors.pink
+                              : Colors.grey.shade400,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // ---------- Categories ----------
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Text(
+                'Categories',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF23223A),
                 ),
               ),
-              const SizedBox(height: 18),
-              // Event Categories
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
                 children: const [
                   _CategoryCard(
-                    icon: Icons.cake,
                     label: 'Birthday Parties',
-                    color: Colors.white, // Card background
-                    iconColor: Color(0xFFB39DDB), // Lavender icon
+                    imageAsset: 'assets/images/cake.jpeg',
                   ),
                   _CategoryCard(
-                    icon: Icons.favorite,
-                    label: 'Weddings',
-                    color: Colors.white,
-                    iconColor: Color(0xFFF06292), // Pink icon
+                    label: 'Wedding Ceremony',
+                    imageAsset: 'assets/images/wedding.jpeg',
                   ),
                   _CategoryCard(
-                    icon: Icons.local_bar,
                     label: 'Cocktail Parties',
-                    color: Colors.white,
-                    iconColor: Color(0xFF4FC3F7), // Blue icon
+                    imageAsset: 'assets/images/cocktail.jpeg',
                   ),
                   _CategoryCard(
-                    icon: Icons.style,
                     label: 'Fashion Show',
-                    color: Colors.white,
-                    iconColor: Color(0xFF80CBC4), // Mint icon
+                    imageAsset: 'assets/images/fashion.jpeg',
+                  ),
+                  _CategoryCard(
+                    label: 'Baby             Shower',
+                    imageAsset: 'assets/images/babyshower.jpeg',
+                  ),
+                  _CategoryCard(
+                    label: 'Farewell Party',
+                    imageAsset: 'assets/images/farewell.jpeg',
+                  ),
+                  _CategoryCard(
+                    label: 'Conference Hall',
+                    imageAsset: 'assets/images/conference.jpeg',
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
-              // Top Venues Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Top Venues',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+
+            // ---------- Top Venues ----------
+            const _SectionHeader(title: 'Top Venues'),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 240,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: const [
+                  _VenueCard(
+                    image: 'assets/images/venue1.jpeg',
+                    name: 'Kwality Durbar Banquet',
+                    location: 'Surat, Gujarat',
+                    price: '₹ 5000',
+                    halls: '2',
+                    capacity: '500',
                   ),
-                  TextButton(
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all(EdgeInsets.zero),
-                      minimumSize: MaterialStateProperty.all(const Size(0, 0)),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      foregroundColor: MaterialStateProperty.all(
-                        Color(0xFFE573B7),
-                      ),
-                      overlayColor: MaterialStateProperty.all(
-                        Colors.transparent,
-                      ),
-                    ),
-                    onPressed: () {
-                      // TODO: View all venues
-                    },
-                    child: const Text(
-                      'View All',
-                      style: TextStyle(
-                        color: Color(0xFFE573B7),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
+                  _VenueCard(
+                    image: 'assets/images/venue2.jpeg',
+                    name: 'Heritage Garden',
+                    location: 'Patna, Bihar',
+                    price: '₹ 7000',
+                    halls: '3',
+                    capacity: '300',
+                  ),
+                  _VenueCard(
+                    image: 'assets/images/venue3.jpeg',
+                    name: 'Royal Place',
+                    location: 'Pune, Mumbai',
+                    price: '₹ 10000',
+                    halls: '4',
+                    capacity: '900',
                   ),
                 ],
               ),
-              // Top Venues List
-              SizedBox(
-                height: 170,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: const [
-                    _VenueCard(
-                      image: 'assets/images/venue1.jpg',
-                      name: 'Kwality Durbar Banquet',
-                      location: 'Surat, Gujarat',
-                      price: '₹ 5000',
-                      halls: '2',
-                      capacity: '500',
-                    ),
-                    _VenueCard(
-                      image: 'assets/images/venue2.jpg',
-                      name: 'Heritage Garden',
-                      location: 'Patna, Bihar',
-                      price: '₹ 7000',
-                      halls: '3',
-                      capacity: '300',
-                    ),
-                    _VenueCard(
-                      image: 'assets/images/venue3.jpg',
-                      name: 'Royal Place',
-                      location: 'Pune, Mumbai',
-                      price: '₹ 10000',
-                      halls: '4',
-                      capacity: '900',
-                    ),
-                  ],
+            ),
+
+            const SizedBox(height: 24),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Text(
+                'Decoration',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF23223A),
                 ),
               ),
-            ],
-          ),
+            ),
+
+            // ---------- NEW: Top Stages ----------
+            const _SectionHeader(title: 'Stages'),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 240,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: const [
+                  _StageCard(
+                    image: 'assets/images/stage1.jpeg',
+                    name: 'Grand Royal Stage',
+                    location: 'Ahmedabad, Gujarat',
+                    price: '₹ 8000',
+                    halls: '1',
+                    capacity: '700',
+                  ),
+                  _StageCard(
+                    image: 'assets/images/stage2.jpeg',
+                    name: 'Crystal Hall Stage',
+                    location: 'Delhi, India',
+                    price: '₹ 12000',
+                    halls: '2',
+                    capacity: '1000',
+                  ),
+                  _StageCard(
+                    image: 'assets/images/stage3.jpeg',
+                    name: 'Sunset Garden Stage',
+                    location: 'Jaipur, Rajasthan',
+                    price: '₹ 9000',
+                    halls: '1',
+                    capacity: '600',
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ---------- NEW: Mandap Decorations ----------
+            const _SectionHeader(title: 'Mandap Decorations'),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 240,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: const [
+                  _StageCard(
+                    image: 'assets/images/mandap1.jpeg',
+                    name: 'Traditional Mandap',
+                    location: 'Surat, Gujarat',
+                    price: '₹ 15,000',
+                    halls: '—',
+                    capacity: '—',
+                  ),
+                  _StageCard(
+                    image: 'assets/images/mandap2.jpeg',
+                    name: 'Royal Wedding Mandap',
+                    location: 'Jaipur, Rajasthan',
+                    price: '₹ 20,000',
+                    halls: '—',
+                    capacity: '—',
+                  ),
+                  _StageCard(
+                    image: 'assets/images/mandap3.jpeg',
+                    name: 'Modern Floral Mandap',
+                    location: 'Mumbai, Maharashtra',
+                    price: '₹ 18,000',
+                    halls: '—',
+                    capacity: '—',
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ---------- NEW: Entrance Gate Decorations ----------
+            const _SectionHeader(title: 'Entrance Gate Decorations'),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 240,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: const [
+                  _StageCard(
+                    image: 'assets/images/gate1.jpeg',
+                    name: 'Royal Gate',
+                    location: 'Delhi, India',
+                    price: '₹ 10,000',
+                    halls: '—',
+                    capacity: '—',
+                  ),
+                  _StageCard(
+                    image: 'assets/images/gate2.jpeg',
+                    name: 'Floral Arch Gate',
+                    location: 'Pune, Maharashtra',
+                    price: '₹ 12,000',
+                    halls: '—',
+                    capacity: '—',
+                  ),
+                  _StageCard(
+                    image: 'assets/images/gate3.jpeg',
+                    name: 'Rustic Theme Gate',
+                    location: 'Hyderabad, Telangana',
+                    price: '₹ 9,000',
+                    halls: '—',
+                    capacity: '—',
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ---------- NEW: Balloon Decorations ----------
+            const _SectionHeader(title: 'Balloon Decorations'),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 240,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: const [
+                  _StageCard(
+                    image: 'assets/images/balloon1.jpeg',
+                    name: 'Birthday Balloon Setup',
+                    location: 'Kolkata, West Bengal',
+                    price: '₹ 5,000',
+                    halls: '—',
+                    capacity: '—',
+                  ),
+                  _StageCard(
+                    image: 'assets/images/balloon2.jpeg',
+                    name: 'Anniversary Balloons',
+                    location: 'Ahmedabad, Gujarat',
+                    price: '₹ 6,500',
+                    halls: '—',
+                    capacity: '—',
+                  ),
+                  _StageCard(
+                    image: 'assets/images/balloon3.jpeg',
+                    name: 'Baby Shower Balloons',
+                    location: 'Bangalore, Karnataka',
+                    price: '₹ 7,000',
+                    halls: '—',
+                    capacity: '—',
+                  ),
+                ],
+              ),
+            ),
+          ], // end Column children
         ),
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF8F5CFF),
         unselectedItemColor: const Color.fromARGB(255, 73, 73, 73),
-        currentIndex: 0,
-        onTap: (index) {
-          // TODO: Handle navigation
-        },
+        currentIndex: _selectedIndex,
+        onTap: _onNavTap,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
@@ -251,63 +474,82 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// Category Card Widget
-class _CategoryCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final Color iconColor;
-  const _CategoryCard({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.iconColor,
-    super.key,
-  });
+// ---------- Helper Widgets ----------
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  const _SectionHeader({required this.title});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: color.withOpacity(0.15),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: SizedBox(
-        width: 80,
-        height: 90,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            // TODO: Navigate to category
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: iconColor, size: 32),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: iconColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-              ),
-            ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
-        ),
+          TextButton(
+            onPressed: () {},
+            child: const Text(
+              'View All',
+              style: TextStyle(
+                color: Color.fromARGB(255, 250, 121, 1),
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// Venue Card Widget
+class _CategoryCard extends StatelessWidget {
+  final String label;
+  final String imageAsset;
+  const _CategoryCard({required this.label, required this.imageAsset});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 2,
+          child: SizedBox(
+            width: 70,
+            height: 70,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(imageAsset, fit: BoxFit.cover),
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        SizedBox(
+          width: 80,
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color(0xFF23223A),
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _VenueCard extends StatelessWidget {
-  final String image;
-  final String name;
-  final String location;
-  final String price;
-  final String halls;
-  final String capacity;
+  final String image, name, location, price, halls, capacity;
   const _VenueCard({
     required this.image,
     required this.name,
@@ -315,18 +557,67 @@ class _VenueCard extends StatelessWidget {
     required this.price,
     required this.halls,
     required this.capacity,
-    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return _CardBase(
+      image: image,
+      name: name,
+      location: location,
+      price: price,
+      halls: halls,
+      capacity: capacity,
+    );
+  }
+}
+
+class _StageCard extends StatelessWidget {
+  final String image, name, location, price, halls, capacity;
+  const _StageCard({
+    required this.image,
+    required this.name,
+    required this.location,
+    required this.price,
+    required this.halls,
+    required this.capacity,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return _CardBase(
+      image: image,
+      name: name,
+      location: location,
+      price: price,
+      halls: halls,
+      capacity: capacity,
+    );
+  }
+}
+
+// Re-usable card layout
+class _CardBase extends StatelessWidget {
+  final String image, name, location, price, halls, capacity;
+  const _CardBase({
+    required this.image,
+    required this.name,
+    required this.location,
+    required this.price,
+    required this.halls,
+    required this.capacity,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 180,
+      width: 200,
       margin: const EdgeInsets.only(right: 16),
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         clipBehavior: Clip.antiAlias,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.asset(
@@ -372,26 +663,26 @@ class _VenueCard extends StatelessWidget {
                       Text(' $capacity', style: const TextStyle(fontSize: 13)),
                     ],
                   ),
-                  const SizedBox(height: 6),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF48FB1),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () {
-                        // TODO: Book venue
-                      },
-                      child: const Text('Book Now'),
-                    ),
-                  ),
                 ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF48FB1),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () {},
+                  child: const Text('Book Now'),
+                ),
               ),
             ),
           ],
