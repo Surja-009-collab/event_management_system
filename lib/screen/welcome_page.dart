@@ -6,7 +6,7 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    body: SafeArea(
+      body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -88,7 +88,7 @@ class WelcomePage extends StatelessWidget {
                   width: double.infinity,
                   child: _GradientButton(
                     onPressed: () {
-                      // TODO: Navigate to next page
+                      Navigator.pushReplacementNamed(context, '/home');
                     },
                     child: const Text('Get Started'),
                   ),

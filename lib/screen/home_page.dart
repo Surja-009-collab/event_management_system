@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:event_management_system/Authentication/login.dart';
+import 'package:event_management_system/screen/drawer.dart'; // <-- Import your drawer here
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -37,9 +38,27 @@ class _EventifyHomeState extends State<EventifyHome> {
   bool isLoggedIn = false; // <-- Add this variable
 
   void _onNavTap(int index) async {
-    // If user is not logged in and taps Bookings, Favourites, or Profile
-    if (!isLoggedIn && (index == 2 || index == 3 || index == 4)) {
-      // Navigate to login page and wait for result
+    // Bookings icon is at index 2
+    if (index == 2) {
+      if (!isLoggedIn) {
+        // Redirect to login if not logged in
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+        if (result == true) {
+          setState(() {
+            isLoggedIn = true;
+          });
+          Navigator.pushNamed(context, '/booking');
+        }
+      } else {
+        Navigator.pushNamed(context, '/booking');
+      }
+      return;
+    }
+    // If user is not logged in and taps Favourites or Profile
+    if (!isLoggedIn && (index == 3 || index == 4)) {
       final result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
@@ -88,14 +107,18 @@ class _EventifyHomeState extends State<EventifyHome> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black87),
-            onPressed: () {},
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu, color: Colors.black87),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            ),
           ),
           const SizedBox(width: 8),
         ],
       ),
-
+      drawer: const AppDrawer(), // <-- Add this line
       // ---------------- BODY ----------------
       body: SingleChildScrollView(
         child: Column(

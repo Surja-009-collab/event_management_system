@@ -8,7 +8,11 @@ import 'package:event_management_system/Authentication/signup.dart'
     show RegisterPage;
 import 'package:event_management_system/Authentication/verify_otp.dart'
     show VerifyOtpPage;
+import 'package:event_management_system/screen/booking.dart' show BookingPage;
 import 'package:event_management_system/screen/home_page.dart';
+import 'package:event_management_system/screen/logo.dart' show EventifyScreen;
+import 'package:event_management_system/screen/welcome_page.dart'
+    show WelcomePage;
 import 'package:flutter/material.dart';
 
 void main() {
@@ -49,8 +53,36 @@ class MyApp extends StatelessWidget {
         '/forgot_password': (context) => const ForgotPasswordPage(),
         '/verify_otp': (context) => const VerifyOtpPage(),
         '/reset_password': (context) => const ResetPasswordPage(),
+        '/booking': (context) => const BookingPage(),
+        '/welcome': (context) => const WelcomePage(),
+        '/home': (context) => const EventifyHome(),
       },
-      home: EventifyHome(),
+      home: const SplashToWelcome(),
     );
   }
 }
+
+// Add this widget to handle splash -> welcome navigation
+class SplashToWelcome extends StatefulWidget {
+  const SplashToWelcome({super.key});
+
+  @override
+  State<SplashToWelcome> createState() => _SplashToWelcomeState();
+}
+
+class _SplashToWelcomeState extends State<SplashToWelcome> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.pushReplacementNamed(context, '/welcome');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const EventifyScreen(); // Your logo.dart screen
+  }
+}
+
+
