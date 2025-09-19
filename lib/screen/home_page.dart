@@ -3,6 +3,8 @@ import 'package:event_management_system/Authentication/login.dart';
 import 'package:event_management_system/screen/drawer.dart'; // <-- Import your drawer here
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'profile_page.dart';
+import 'favourites_page.dart';
 
 class EventifyHome extends StatefulWidget {
   const EventifyHome({Key? key}) : super(key: key);
@@ -41,7 +43,6 @@ class _EventifyHomeState extends State<EventifyHome> {
     // Bookings icon is at index 2
     if (index == 2) {
       if (!isLoggedIn) {
-        // Redirect to login if not logged in
         final result = await Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const LoginPage()),
@@ -55,6 +56,11 @@ class _EventifyHomeState extends State<EventifyHome> {
       } else {
         Navigator.pushNamed(context, '/booking');
       }
+      return;
+    }
+    // Search icon is at index 1
+    if (index == 1) {
+      Navigator.pushNamed(context, '/search');
       return;
     }
     // If user is not logged in and taps Favourites or Profile
@@ -145,7 +151,7 @@ class _EventifyHomeState extends State<EventifyHome> {
                               fit: BoxFit.cover,
                             ),
                             Container(
-                              color: Colors.black45,
+                              // color: Colors.black45,
                               alignment: Alignment.center,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -620,7 +626,7 @@ class _StageCard extends StatelessWidget {
 }
 
 // Re-usable card layout
-class _CardBase extends StatelessWidget {
+class _CardBase extends StatefulWidget {
   final String image, name, location, price, halls, capacity;
   const _CardBase({
     required this.image,
@@ -630,6 +636,13 @@ class _CardBase extends StatelessWidget {
     required this.halls,
     required this.capacity,
   });
+
+  @override
+  State<_CardBase> createState() => _CardBaseState();
+}
+
+class _CardBaseState extends State<_CardBase> {
+  bool isFavourite = false;
 
   @override
   Widget build(BuildContext context) {
@@ -643,11 +656,40 @@ class _CardBase extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              image,
-              width: double.infinity,
-              height: 80,
-              fit: BoxFit.cover,
+            Stack(
+              children: [
+                Image.asset(
+                  widget.image,
+                  width: double.infinity,
+                  height: 80,
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.7),
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        isFavourite ? Icons.favorite : Icons.favorite_border,
+                        color: Colors.pink,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          isFavourite = !isFavourite;
+                        });
+                        Navigator.pushNamed(context, '/favourites');
+                      },
+                      iconSize: 22,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -655,14 +697,14 @@ class _CardBase extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    widget.name,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     ),
                   ),
                   Text(
-                    location,
+                    widget.location,
                     style: const TextStyle(color: Colors.grey, fontSize: 13),
                   ),
                   const SizedBox(height: 4),
@@ -673,17 +715,23 @@ class _CardBase extends StatelessWidget {
                         size: 14,
                         color: Colors.pink,
                       ),
-                      Text(price, style: const TextStyle(fontSize: 13)),
+                      Text(widget.price, style: const TextStyle(fontSize: 13)),
                       const Spacer(),
                       const Icon(
                         Icons.meeting_room,
                         size: 14,
                         color: Colors.purple,
                       ),
-                      Text(' $halls', style: const TextStyle(fontSize: 13)),
+                      Text(
+                        ' ${widget.halls}',
+                        style: const TextStyle(fontSize: 13),
+                      ),
                       const Spacer(),
                       const Icon(Icons.people, size: 14, color: Colors.blue),
-                      Text(' $capacity', style: const TextStyle(fontSize: 13)),
+                      Text(
+                        ' ${widget.capacity}',
+                        style: const TextStyle(fontSize: 13),
+                      ),
                     ],
                   ),
                 ],
@@ -695,7 +743,7 @@ class _CardBase extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF48FB1),
+                    backgroundColor: const Color(0xFF8F5CFF),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),

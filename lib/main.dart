@@ -9,8 +9,11 @@ import 'package:event_management_system/Authentication/signup.dart'
 import 'package:event_management_system/Authentication/verify_otp.dart'
     show VerifyOtpPage;
 import 'package:event_management_system/screen/booking.dart' show BookingPage;
+import 'package:event_management_system/screen/favourites_page.dart';
 import 'package:event_management_system/screen/home_page.dart';
 import 'package:event_management_system/screen/logo.dart' show EventifyScreen;
+import 'package:event_management_system/screen/search_screen.dart'
+    show SearchScreen;
 import 'package:event_management_system/screen/welcome_page.dart'
     show WelcomePage;
 import 'package:flutter/material.dart';
@@ -56,6 +59,8 @@ class MyApp extends StatelessWidget {
         '/booking': (context) => const BookingPage(),
         '/welcome': (context) => const WelcomePage(),
         '/home': (context) => const EventifyHome(),
+        '/search': (context) => const SearchScreen(),
+        '/favourites': (context) => const FavouritesPage(),
       },
       home: const SplashToWelcome(),
     );
@@ -84,5 +89,3 @@ class _SplashToWelcomeState extends State<SplashToWelcome> {
     return const EventifyScreen(); // Your logo.dart screen
   }
 }
-
-
