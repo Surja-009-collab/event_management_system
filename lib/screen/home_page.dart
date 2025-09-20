@@ -1,10 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:event_management_system/Authentication/login.dart';
 import 'package:event_management_system/screen/drawer.dart'; // <-- Import your drawer here
+import 'package:event_management_system/screen/favourites_page.dart'; // <-- Import your drawer here
+import 'package:event_management_system/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'profile_page.dart';
-import 'favourites_page.dart';
+// <-- Import your drawer here
 
 class EventifyHome extends StatefulWidget {
   const EventifyHome({Key? key}) : super(key: key);
@@ -38,6 +39,7 @@ class _EventifyHomeState extends State<EventifyHome> {
   int _current = 0;
   int _selectedIndex = 0;
   bool isLoggedIn = false; // <-- Add this variable
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _onNavTap(int index) async {
     // Bookings icon is at index 2
@@ -63,28 +65,71 @@ class _EventifyHomeState extends State<EventifyHome> {
       Navigator.pushNamed(context, '/search');
       return;
     }
-    // If user is not logged in and taps Favourites or Profile
-    if (!isLoggedIn && (index == 3 || index == 4)) {
-      final result = await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
-      if (result == true) {
-        setState(() {
-          isLoggedIn = true;
-          _selectedIndex = index;
-        });
+    // Favourites icon is at index 3
+    if (index == 3) {
+      if (!isLoggedIn) {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+        if (result == true) {
+          setState(() {
+            isLoggedIn = true;
+          });
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const FavouritesPage()),
+          );
+        }
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FavouritesPage()),
+        );
       }
-    } else {
-      setState(() {
-        _selectedIndex = index;
-      });
+      return;
     }
+
+    // Profile icon is at index 4
+    if (index == 4) {
+      if (!isLoggedIn) {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+        if (result == true) {
+          setState(() {
+            isLoggedIn = true;
+          });
+          Navigator.pushNamed(context, '/profile');
+        }
+      } else {
+        Navigator.pushNamed(context, '/profile');
+      }
+      return;
+    }
+    // Default: update selected index
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void _updateLoginStatus(bool status) {
+    setState(() {
+      isLoggedIn = status;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: AppDrawer(
+        isLoggedIn: false, // Set this to the appropriate value
+        onLoginStatusChanged:
+            (bool value) {}, // Provide your callback logic here
+      ),
+
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -123,8 +168,12 @@ class _EventifyHomeState extends State<EventifyHome> {
           ),
           const SizedBox(width: 8),
         ],
+      ), // <-- Add this line
+      endDrawer: AppDrawer(
+        isLoggedIn: false, // Set this to the appropriate value
+        onLoginStatusChanged:
+            (bool value) {}, // Provide your callback logic here
       ),
-      drawer: const AppDrawer(), // <-- Add this line
       // ---------------- BODY ----------------
       body: SingleChildScrollView(
         child: Column(
@@ -479,25 +528,9 @@ class _EventifyHomeState extends State<EventifyHome> {
         ),
       ),
 
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF8F5CFF),
-        unselectedItemColor: const Color.fromARGB(255, 73, 73, 73),
+      bottomNavigationBar: BottomNavBar(
         currentIndex: _selectedIndex,
         onTap: _onNavTap,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: 'Bookings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            label: 'Favourites',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
       ),
     );
   }

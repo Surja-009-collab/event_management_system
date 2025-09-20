@@ -1,3 +1,4 @@
+import 'package:event_management_system/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,6 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -20,10 +22,31 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _signIn() {
+  void _signIn() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      await Future.delayed(const Duration(seconds: 2)); //
+      final isSuccess = true; // Simulate success
+
+      if (isSuccess) {
+        Navigator.pop(
+          context,
+          true,
+        ); // Return true to indicate successful login
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Login failed. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      setState(() {
+        _isLoading = false;
+      });
       // TODO: Handle sign in logic
-      Navigator.pop(context, true); // Return true to indicate successful login
     }
   }
 
@@ -213,6 +236,15 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
+      ),
+       bottomNavigationBar: BottomNavBar(
+        currentIndex: 3,
+        onTap: (index) {
+          Navigator.pushReplacementNamed(
+            context,
+            ['/home', '/search', '/booking', '/favourites', '/profile'][index],
+          );
+        },
       ),
     );
   }

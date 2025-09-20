@@ -1,3 +1,5 @@
+import 'package:event_management_system/screen/drawer.dart';
+import 'package:event_management_system/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -38,11 +40,19 @@ class _SearchScreenState extends State<SearchScreen>
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      key: _scaffoldKey,
+      drawer: AppDrawer(
+        isLoggedIn: false, // Set this to the appropriate value
+        onLoginStatusChanged:
+            (bool value) {}, // Provide your callback logic here
+      ),
+      // endDrawer: const AppDrawer(),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 1,
         leading: Padding(
           padding: const EdgeInsets.only(left: 12.0),
           child: Image.asset('assets/images/logo1.jpeg', width: 36, height: 36),
@@ -69,26 +79,21 @@ class _SearchScreenState extends State<SearchScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.menu, color: Colors.black87),
-            onPressed: () {},
+            onPressed: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
           ),
           const SizedBox(width: 8),
         ],
       ),
 
-      // Optional drawer (if you had one on home, replicate it here)
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: const [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Colors.pink),
-              child: Text('Menu', style: TextStyle(color: Colors.white)),
-            ),
-            ListTile(leading: Icon(Icons.home), title: Text('Home')),
-            ListTile(leading: Icon(Icons.settings), title: Text('Settings')),
-          ],
-        ),
+      endDrawer: AppDrawer(
+        isLoggedIn: false, // Set this to the appropriate value
+        onLoginStatusChanged:
+            (bool value) {}, // Provide your callback logic here
       ),
+
+      // Optional drawer (if you had one on home, replicate it here)
 
       // ------------------ MAIN BODY ------------------
       body: Padding(
@@ -157,36 +162,14 @@ class _SearchScreenState extends State<SearchScreen>
       ),
 
       // ------------------ BOTTOM NAV BAR ------------------
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _currentIndex,
-        selectedItemColor: const Color(0xFF8F5CFF),
-        unselectedItemColor: const Color.fromARGB(255, 73, 73, 73),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: 1,
         onTap: (index) {
-          setState(() => _currentIndex = index);
-          // Simple navigation example:
-          if (index == 0) {
-            Navigator.pushReplacementNamed(context, '/home');
-          } else if (index == 1) {
-            // stay here
-          } else if (index == 2) {
-            // Navigator.pushNamed(context, '/bookings');
-          }
-          // Add more routes as needed
+          Navigator.pushReplacementNamed(
+            context,
+            ['/home', '/search', '/booking', '/favourites', '/profile'][index],
+          );
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: 'Bookings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            label: 'Favourites',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
       ),
     );
   }

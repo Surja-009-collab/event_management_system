@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:event_management_system/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -364,6 +365,15 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
         ),
+      ),
+       bottomNavigationBar: BottomNavBar(
+        currentIndex: 3,
+        onTap: (index) {
+          Navigator.pushReplacementNamed(
+            context,
+            ['/home', '/search', '/booking', '/favourites', '/profile'][index],
+          );
+        },
       ),
     );
   }

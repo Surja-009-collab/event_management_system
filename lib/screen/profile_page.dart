@@ -1,10 +1,19 @@
+import 'package:event_management_system/screen/change_password.dart';
+import 'package:event_management_system/screen/drawer.dart';
+import 'package:event_management_system/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
     // Dummy user data
     const user = {
       'name': 'Surja Bist',
@@ -14,12 +23,54 @@ class ProfilePage extends StatelessWidget {
     };
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Profile'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 1,
+      key: _scaffoldKey,
+      drawer: AppDrawer(
+        isLoggedIn: false, // Set this to the appropriate value
+        onLoginStatusChanged:
+            (bool value) {}, // Provide your callback logic here
       ),
+      // endDrawer: const AppDrawer(),
+      appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: Image.asset('assets/images/logo1.jpeg', width: 36, height: 36),
+        ),
+        title: RichText(
+          text: const TextSpan(
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            children: [
+              TextSpan(
+                text: 'E',
+                style: TextStyle(color: Color(0xFF23223A)),
+              ),
+              TextSpan(
+                text: 'v',
+                style: TextStyle(color: Color(0xFF1CCFCF)),
+              ),
+              TextSpan(
+                text: 'entify',
+                style: TextStyle(color: Color(0xFF23223A)),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.menu, color: Colors.black87),
+            onPressed: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+
+      endDrawer: AppDrawer(
+        isLoggedIn: false, // Set this to the appropriate value
+        onLoginStatusChanged:
+            (bool value) {}, // Provide your callback logic here
+      ),
+
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -60,7 +111,12 @@ class ProfilePage extends StatelessWidget {
               leading: const Icon(Icons.lock, color: Colors.orange),
               title: const Text('Change Password'),
               onTap: () {
-                // Implement change password navigation
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ChangePasswordPage(),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -72,6 +128,15 @@ class ProfilePage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: 4,
+        onTap: (index) {
+          Navigator.pushReplacementNamed(
+            context,
+            ['/home', '/search', '/booking', '/favourites', '/profile'][index],
+          );
+        },
       ),
     );
   }

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'venue_page.dart';
+import 'event_planner_page.dart';
+import 'contact_us_page.dart';
+import 'about_us_page.dart';
 
 class AppDrawer extends StatefulWidget {
-  const AppDrawer({super.key});
+  const AppDrawer({super.key, required Null Function(bool value) onLoginStatusChanged, required bool isLoggedIn});
 
   @override
   State<AppDrawer> createState() => _AppDrawerState();
@@ -40,6 +44,9 @@ class _AppDrawerState extends State<AppDrawer> {
             title: const Text("Home"),
             onTap: () {
               Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, '/home');
+              // Navigator.pushReplacementNamed(context, '/search');
+              // Navigator.pushReplacementNamed(context, '/booking');
               // Navigate to home if needed
             },
           ),
@@ -48,6 +55,7 @@ class _AppDrawerState extends State<AppDrawer> {
             title: const Text("Venue"),
             onTap: () {
               Navigator.pop(context);
+              Navigator.pushNamed(context, '/venue');
               // Navigate to venue page if needed
             },
           ),
@@ -56,6 +64,7 @@ class _AppDrawerState extends State<AppDrawer> {
             title: const Text("Event Planner"),
             onTap: () {
               Navigator.pop(context);
+              Navigator.pushNamed(context, '/event_planner');
               // Navigate to event planner page if needed
             },
           ),
@@ -63,8 +72,9 @@ class _AppDrawerState extends State<AppDrawer> {
             leading: const Icon(Icons.contact_mail),
             title: const Text("Contact Us"),
             onTap: () {
-              Navigator.pop(context);
-              // Navigate to contact us page if needed
+              Navigator.pop(context); 
+              Navigator.pushNamed(context, '/contact_us');
+              //  Navigate to contact us page if needed
             },
           ),
           ListTile(
@@ -72,6 +82,7 @@ class _AppDrawerState extends State<AppDrawer> {
             title: const Text("About Us"),
             onTap: () {
               Navigator.pop(context);
+              Navigator.pushNamed(context, '/about_us');
               // Navigate to about us page if needed
             },
           ),

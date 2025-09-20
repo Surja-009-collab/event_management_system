@@ -12,6 +12,7 @@ import 'package:event_management_system/screen/booking.dart' show BookingPage;
 import 'package:event_management_system/screen/favourites_page.dart';
 import 'package:event_management_system/screen/home_page.dart';
 import 'package:event_management_system/screen/logo.dart' show EventifyScreen;
+import 'package:event_management_system/screen/profile_page.dart'; // Add this import
 import 'package:event_management_system/screen/search_screen.dart'
     show SearchScreen;
 import 'package:event_management_system/screen/welcome_page.dart'
@@ -61,6 +62,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const EventifyHome(),
         '/search': (context) => const SearchScreen(),
         '/favourites': (context) => const FavouritesPage(),
+        '/profile': (context) => const ProfilePage(),
       },
       home: const SplashToWelcome(),
     );

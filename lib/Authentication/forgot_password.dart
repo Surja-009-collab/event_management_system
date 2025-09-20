@@ -1,3 +1,4 @@
+import 'package:event_management_system/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -174,6 +175,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             ],
           ),
         ),
+      ),
+       bottomNavigationBar: BottomNavBar(
+        currentIndex: 3,
+        onTap: (index) {
+          Navigator.pushReplacementNamed(
+            context,
+            ['/home', '/search', '/booking', '/favourites', '/profile'][index],
+          );
+        },
       ),
     );
   }
